@@ -1,0 +1,35 @@
+{
+  "compilerOptions": {
+    "downlevelIteration": true,
+    "target": "es5",
+    "lib": [
+      "ES2019"
+    ],
+    "outDir": "debug/",
+    "module": "commonjs",
+    "sourceMap": true,
+    "removeComments": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "baseUrl": "@/**/*",
+    "types": ["node"],
+    "paths": {
+      "*": [
+        "node_modules/*"
+      ],
+      "@keys/*": [
+        "keys/*"
+      ]
+    }
+  },
+  "include": [
+    "src/**/*"
+, "src/service/User.service.ts", "src/service/Chat.service.ts", "src/service/Rank.service.ts"],
+  "exclude": [
+    "node_modules",
+    "./node_modules",
+    "./node_modules/*",
+    "./node_modules/@types/node/index.d.ts",
+  ]
+}
