@@ -61,7 +61,7 @@ export default class Rank {
     const roleData = this.roleDataDTO (attackerRole, attackedRole)
     await this.insertOnRank(roleData)
     const attackerKd = await this.selectKd(attackerID)
-    this.sendChatMsg({ attackerKd }, attackerRole.base.name, attackedRole.base.name, 1)
+    this.sendChatMsg({ attackerKd }, attackerRole, attackedRole, 7)
   }
 
   roleDataDTO (attackerRole: any, attackedRole: any) {
@@ -126,16 +126,13 @@ export default class Rank {
     return logType[logRole](log) || console.log('Erro parselog')       
   }
 
-  async sendChatMsg (kd: any, attacker: string, attacked: string, chat: any) {
+  async sendChatMsg (kd: any, attacker: any, attacked: any, chat: any, attackerRoleid?: number) {
     const { attackerKd } = kd
-    await Chat.BroadCast(`^ffcb4a^00ffff${attacker} ^e85904eliminou ^ffcb4a^00ffff${attacked}. ^e85904${attacker} está ${attackerKd.kills} / ${attackerKd.deaths}`, chat)
+    await Chat.BroadCast(` eliminou ${attacked.base.name}. ${attacker.base.name} está ${attackerKd.kills} / ${attackerKd.deaths}`, chat, attacker.base.id)
   }
 
   hexToString(hex: string) {
-    // Remove o caractere '^' do início
     hex = hex.slice(1);
-    
-    // Transforma cada par de caracteres hexadecimais em seu valor de caractere
     let result = '';
     for (let i = 0; i < hex.length; i += 2) {
       const byte = parseInt(hex.substr(i, 2), 16);
