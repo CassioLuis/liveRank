@@ -41,8 +41,8 @@ import UserService from './User.service'
 */
 import Mysql from '../infra/mysql'
 import insertOnRank from '../infra/insert_on_rank'
-import { selectKills, selectDeaths } from '../infra/select_kd'
-import { Connection, PoolConnection } from 'mysql2/promise'
+import { PoolConnection } from 'mysql2/promise'
+import ranking from '../infra/get_ranking'
 
 export default class Rank {
 
@@ -60,8 +60,8 @@ export default class Rank {
     const attackedRole = await this.getAttackedRole(attackedID)
     const roleData = this.roleDataDTO (attackerRole, attackedRole)
     await this.insertOnRank(roleData)
-    const attackerKd = await this.selectKd(attackerID)
-    this.sendChatMsg({ attackerKd }, attackerRole, attackedRole, 7)
+    const attackerRank = await this.getRanking(attackerID)
+    this.sendChatMsg(attackerRank, attackedRole, 7)
   }
 
   roleDataDTO (attackerRole: any, attackedRole: any) {
@@ -77,22 +77,18 @@ export default class Rank {
     }
   }
 
-  async selectKd (roleId: number) {
+  async getRanking (roleId: number) {
     const connection: PoolConnection = await this.mysql.connect()
     try {
-      const [[{kills}]]: any = await connection.query(selectKills, [roleId])
-      const [[{deaths}]]: any = await connection.query(selectDeaths, [roleId])
-      return {
-        kills,
-        deaths
-      }
+      const [[rank]]: any = await connection.query(ranking, [roleId])
+      return rank
     } catch (error) {
       console.log(error)
     } finally {
       connection.release()
     }
   }
-
+  
   async insertOnRank (roleData: any) {
     
     const {
@@ -126,19 +122,11 @@ export default class Rank {
     return logType[logRole](log) || console.log('Erro parselog')       
   }
 
-  async sendChatMsg (kd: any, attacker: any, attacked: any, chat: any, attackerRoleid?: number) {
-    const { attackerKd } = kd
-    await Chat.BroadCast(` eliminou ${attacked.base.name}. ${attacker.base.name} está ${attackerKd.kills} / ${attackerKd.deaths}`, chat, attacker.base.id)
-  }
-
-  hexToString(hex: string) {
-    hex = hex.slice(1);
-    let result = '';
-    for (let i = 0; i < hex.length; i += 2) {
-      const byte = parseInt(hex.substr(i, 2), 16);
-      result += String.fromCharCode(byte);
-    }
-    return result
+  async sendChatMsg (attackerRank: any, attacked: any, chat: any) {
+    const { n_kills, n_death, rank_pos, name, kid } = attackerRank
+    const attackedName = attacked.base.name
+    const msg = `TOP ${rank_pos} eliminou ${attackedName}. ${name} está ${n_kills} / ${n_death}.`
+    await Chat.BroadCast(msg, chat, kid)
   }
 
   static getInstance() {
