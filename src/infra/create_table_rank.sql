@@ -10,3 +10,8 @@ CREATE TABLE rankPvp (
   drace INT,
   dcls INT
 );
+
+CREATE INDEX idx_rankpvp_kid ON pw.rankPvp (kid);
+CREATE INDEX idx_rankpvp_did ON pw.rankPvp (did);
+CREATE INDEX idx_rankpvp_group ON pw.rankPvp (kid, kname);
+CREATE INDEX idx_rankpvp_composite ON pw.rankPvp (kid, kname, dname);

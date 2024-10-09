@@ -123,9 +123,9 @@ export default class Rank {
   }
 
   async sendChatMsg (attackerRank: any, attacked: any, chat: any) {
-    const { n_kills, n_death, rank_pos, name, kid } = attackerRank
+    const { n_kills, n_deaths, rank_pos, name, kid } = attackerRank
     const attackedName = attacked.base.name
-    const msg = `TOP ${rank_pos} eliminou ${attackedName}. ${name} está ${n_kills} / ${n_death}.`
+    const msg = ` eliminou ${attackedName} e está no TOP ${rank_pos}  •  ${n_kills} / ${n_deaths}.`
     await Chat.BroadCast(msg, chat, kid)
   }
 
