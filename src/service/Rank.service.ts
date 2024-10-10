@@ -56,8 +56,10 @@ export default class Rank {
     if (!gsLog) throw new Error('gslog Not Found!')
     const attackerID = this.parseLog(gsLog, 'attacker')
     const attackedID = this.parseLog(gsLog, 'attacked')
-    const attackerRole = await this.getAttackerRole(attackerID)
-    const attackedRole = await this.getAttackedRole(attackedID)
+    const [ attackerRole, attackedRole ] = await Promise.all([
+      this.getRole(attackerID),
+      this.getRole(attackedID)
+    ])
     const roleData = this.roleDataDTO (attackerRole, attackedRole)
     await this.insertOnRank(roleData)
     const attackerRank = await this.getRanking(attackerID)
@@ -106,12 +108,8 @@ export default class Rank {
     }
   }
 
-  async getAttackerRole (attacker: any) {
-    return UserService.RoleData(Number(attacker))
-  }
-
-  async getAttackedRole (attacked: any) {
-    return UserService.RoleData(Number(attacked))
+  async getRole (roleId: any) {
+    return UserService.RoleData(Number(roleId))
   }
 
   parseLog (log: string, logRole: string) {
